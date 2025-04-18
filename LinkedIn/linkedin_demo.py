@@ -6,6 +6,7 @@ from connections import Connections
 from datetime import datetime
 from linkedin_system import LinkedInSystem
 from notifications import Notifications
+from jobpostings import JobPostings
 class LinkedInDemo:
     def run():
         linkedin_system = LinkedInSystem.get_instance()
@@ -15,18 +16,30 @@ class LinkedInDemo:
         kirtan = linkedin_system.create_user("Kirtan", "kir@gmail.com", "444555")
 
         #Add Education
-        linkedin_system.user_add_education(mayur, "Indiana University", "2023", "2025")
-        linkedin_system.user_add_education(kirtan, "Indiana University", "2023", "2025")
+        mayur.add_education("Indiana University", "2023", "2025")
+        kirtan.add_education("Indiana University", "2023", "2025")
 
         #Add Experience
-        linkedin_system.user_add_experience(mayur, "Microsoft", "2025", "2035")
+        mayur.add_experience("Microsoft", "2025", "2035")
 
-        #Subscribe to Notification Service
-        Notifications().add_observer(mayur)
-        Notifications().add_observer(kirtan)
         #Send Request
-        linkedin_system.send_connection_request(mayur, kirtan)
+        mayur.send_connection_request(kirtan)
 
+        #Accept Request
+        kirtan.accept_connection_request(mayur)
+
+        #Job Posting
+        job = JobPostings("Software Engineer", "SDE-1", datetime.now(), mayur, "Microsoft")
+        linkedin_system.post_job_posting(job)
+
+        #Search Job Posting
+        linkedin_system.search_job_posting()
+
+        notifications = linkedin_system.get_notifications(mayur._email)
+        for n in notifications:
+            print(f"Notification Type: {n.type}")
+            print(f"Message: {n.notification_message}")
+            print(f"Date-Time: {n.notification_date}")
 
 if __name__ == "__main__":
     demo = LinkedInDemo

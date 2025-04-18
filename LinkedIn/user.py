@@ -1,6 +1,3 @@
-from experience import Experience
-from education import Education
-from headline import Headline
 from profile import Profile
 from connections import Connections
 from datetime import datetime
@@ -28,9 +25,19 @@ class User:
     
     def send_connection_request(self, to_user):
         connection = Connections(self, to_user, datetime.now())
+        to_user.pending_connections.append(connection)
         print(f"Connection request to {to_user._name} sent")
         return connection
+
+    def accept_connection_request(self, from_user):
+        for connection in self.pending_connections:
+            if connection.from_user._email == from_user._email:
+                self.connections.append(from_user)
+                from_user.connections.append(self)
+                self.pending_connections.remove(connection)
+                print(f"{self._name} accepted {from_user._name}'s connection request!")
+                break
     
     def recieve_connection_request(self, from_user):
         print(f"{from_user._name} sent a Connection request")
-    
+

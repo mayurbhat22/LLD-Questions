@@ -5,6 +5,10 @@ from user import User
 from connections import Connections
 from datetime import datetime
 from notifications import Notifications
+from jobpostings import JobPostings
+from notifications import Notifications
+from notifications_type import NotificationType
+from collections import defaultdict
 class LinkedInSystem:
     _instance = None
 
@@ -13,6 +17,8 @@ class LinkedInSystem:
             raise Exception("Only one instance can be created")
         LinkedInSystem._instance = self
         self.users = []
+        self.job_postings = []
+        self.notifications = defaultdict(list)
     
     @staticmethod
     def get_instance():
@@ -25,18 +31,20 @@ class LinkedInSystem:
         self.users.append(user)
         return user
     
-    def user_add_education(self, user: User, university: str, from_year: str, to_year: str):
-        user.add_education(university, from_year, to_year)
+    def post_job_posting(self, job: JobPostings):
+        self.job_postings.append(job)
+        for user in self.users:
+            notification = Notifications(NotificationType.JOB_POSTING, "A job has been posted", datetime.now())
+            self.add_notification(notification, user)
     
-    def user_add_experience(self, user: User, company: str, from_year: str, to_year: str):
-        user.add_experience(company, from_year, to_year)
-    
-    def user_add_headline(self, user: User, headline_summary: str):
-        user.add_headline(headline_summary)
-    
-    def send_connection_request(self, from_user: User, to_user: User):
-        connection = from_user.send_connection_request(to_user)
-        to_user.pending_connections.append(connection)
-        Notifications().notify_user(from_user, to_user)
+    def search_job_posting(self):
+        for job in self.job_postings:
+            print(f"Role: {job.title}")
+            print(f"Posted Date: {job.posted_date}")
+            print(f"Company: {job.company}")
 
+    def add_notification(self, notification, user):
+        self.notifications[user._email].append(notification)
     
+    def get_notifications(self, user_email):
+        return self.notifications[user_email]
