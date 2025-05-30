@@ -59,3 +59,84 @@ def abstact_client(self, factory: FurnitureFactory):
     sofa = factory.create_sofa()
 
     
+
+#Products
+class Button:
+    def render(self):
+        pass
+class Alert:
+    def show(self):
+        pass
+
+#Concrete Products
+class AndroidButton(Button):
+    def render(self):
+        print("Android style Button")
+
+class IOSButton(Button):
+    def render(self):
+        print("IOS Style Button")
+
+class AndroidAlert(Alert):
+    def show(self):
+        print("Android-style Alert")
+
+class IOSAlert(Alert):
+    def show(self):
+        print("IOS-style Alert")
+
+#Abstract Factory
+class UIFactory(ABC):
+    def create_button(self): pass
+    def create_alert(self): pass
+
+#Android Factory
+class AndroidFactory(UIFactory):
+    def create_button(self):
+        return AndroidButton()
+    
+    def create_alert(self):
+        return AndroidAlert()
+
+#IOS Factory
+class IOSFactory(UIFactory):
+    def create_button(self):
+        return IOSButton()
+
+    def create_alert(self):
+        return IOSAlert
+
+def render_ui(factory: UIFactory):
+    alert = factory.create_alert()
+    button = factory.create_button()
+    alert.show()
+    button.show()
+
+render_ui(AndroidFactory())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
